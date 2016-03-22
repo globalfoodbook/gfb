@@ -1,0 +1,42 @@
+server_name globalfoodbook.com www.globalfoodbook.com globalfoodbook.net www.globalfoodbook.net globalfoodbook.org www.globalfoodbook.org globalfoodbook.co.uk www.globalfoodbook.co.uk;
+root /home/gfb/app/wp;
+access_log /etc/nginx/logs/gfb/access.log;
+error_log /etc/nginx/logs/gfb/error.log;
+error_page 404 = /error/404;
+port_in_redirect off;
+
+include /etc/nginx/sites-available/w3tc.conf;
+ #include /home/gfb/app/wp/ngx_page_speed.conf;
+include /etc/nginx/sites-available/ngx_page_speed_x.conf;
+
+#rewrite ^/recipe-items/(.*)/(%EF%BB%BF)$ /$1/$2;
+rewrite ^(/de/detail/)(.*)$ http:// permanent;
+rewrite ^/sitemapindex\.xml$ /index.php?sitemap=1 last;
+rewrite ^/([^/]+?)_part([0-9]+)?\.xml$ /index.php?sitemap=$1&sitemap_n=$2 last;
+rewrite ^/([^/]+?)\.xml$ /index.php?sitemap=$1 last;
+#rewrite ^/sitemap(-+([a-zA-Z0-9_-]+))?\.xml$ "/index.php?xml_sitemap=params=$2" last;
+#rewrite ^/sitemap(-+([a-zA-Z0-9_-]+))?\.xml\.gz$ "/index.php?xml_sitemap=params=$2; zip=true" last;
+#rewrite ^/sitemap(-+([a-zA-Z0-9_-]+))?\.html$ "/index.php?xml_sitemap=params=$2;html=true" last;
+#rewrite ^/sitemap(-+([a-zA-Z0-9_-]+))?\.html.gz$ "/index.php?xml_sitemap=params=$2;html=true;zip=true" last;
+expires 30d;
+
+location / {
+  #try_files $uri $uri/ @extensionless-php;
+  try_files $uri $uri/ /index.php?$args;
+  index index.html index.htm index.php;
+}
+
+location ~* \.(htm|html)$ {
+  expires 1m;
+  log_not_found off;
+}
+location ~ \.php$ {
+  include fastcgi_params;
+  try_files $uri =404;
+  fastcgi_pass 127.0.0.1:9000;
+  fastcgi_index index.php;
+  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+}
+location @extensionless-php {
+rewrite ^(.*)$ $1.php last;
+}

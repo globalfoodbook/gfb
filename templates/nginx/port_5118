@@ -1,0 +1,4 @@
+server {
+  listen 5118;
+  include /etc/nginx/sites-available/default;
+}
