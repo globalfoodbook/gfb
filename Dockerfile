@@ -44,6 +44,12 @@ RUN sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbc
 RUN sudo apt-get -y update
 RUN sudo apt-get -y install php5-mysql libsqlite3-dev php5 php5-dev php5-curl php-pear php5-fpm php5-gd
 
+RUN echo 'deb http://apt.newrelic.com/debian/ newrelic non-free' | sudo tee /etc/apt/sources.list.d/newrelic.list
+RUN /bin/bash -l -c "wget -O- https://download.newrelic.com/548C16BF.gpg | sudo apt-key add - "
+RUN sudo apt-get update -y
+RUN sudo apt-get install -y newrelic-php5
+RUN sudo newrelic-install install
+
 RUN /bin/bash -l -c "sudo mkdir -p /etc/ngx_pagespeed; cd /etc/ngx_pagespeed; sudo wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${NPS_VERSION}-beta.zip -O /etc/ngx_pagespeed/release-${NPS_VERSION}-beta.zip; sudo unzip release-${NPS_VERSION}-beta.zip -d /etc/ngx_pagespeed; cd /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}-beta/; sudo wget https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz -O /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}-beta/${NPS_VERSION}.tar.gz; sudo tar -xzvf /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}-beta/${NPS_VERSION}.tar.gz"
 RUN /bin/bash -l -c "cd ~/ && sudo wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && sudo tar xzf nginx-${NGINX_VERSION}.tar.gz && cd nginx-${NGINX_VERSION} && sudo ./configure --prefix=/etc/nginx --add-module=/etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}-beta ${PS_NGX_EXTRA_FLAGS} && sudo make && sudo make install"
 ADD templates/nginx/nginx_init.sh /etc/init.d/nginx
