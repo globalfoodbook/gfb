@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 export WP_HOST_IP=`awk 'NR==1 {print $1}' /etc/hosts`
 
 sudo cp /home/gfb/wp-config.php /home/gfb/app/wp/wp-config.php;
