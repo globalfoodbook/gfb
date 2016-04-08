@@ -12,7 +12,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.en
 ENV LC_ALL en_US.UTF-8
 ENV NGINX_VERSION 1.9.10
-ENV NPS_VERSION 1.10.33.7
+ENV NPS_VERSION  1.10.33.7-beta
 # ENV PS_NGX_EXTRA_FLAGS --with-cc=/usr/lib/gcc-mozilla/bin/gcc  --with-ld-opt=-static-libstdc++
 ENV PS_NGX_EXTRA_FLAGS --with-cc=/usr/bin/gcc --with-ld-opt=-static-libstdc++
 
