@@ -12,7 +12,8 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.en
 ENV LC_ALL en_US.UTF-8
 ENV NGINX_VERSION 1.9.10
-ENV NPS_VERSION  1.10.33.7-beta
+ENV PSOL_VERSION 1.10.33.7
+ENV NPS_VERSION $PSOL_VERSION-beta
 # ENV PS_NGX_EXTRA_FLAGS --with-cc=/usr/lib/gcc-mozilla/bin/gcc  --with-ld-opt=-static-libstdc++
 ENV PS_NGX_EXTRA_FLAGS --with-cc=/usr/bin/gcc --with-ld-opt=-static-libstdc++
 
@@ -50,7 +51,7 @@ RUN sudo apt-get update -y
 RUN sudo apt-get install -y newrelic-php5
 RUN sudo newrelic-install install
 
-RUN /bin/bash -l -c "sudo mkdir -p /etc/ngx_pagespeed; cd /etc/ngx_pagespeed; sudo wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${NPS_VERSION}.zip -O /etc/ngx_pagespeed/release-${NPS_VERSION}.zip; sudo unzip release-${NPS_VERSION}.zip -d /etc/ngx_pagespeed; cd /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/; sudo wget https://dl.google.com/dl/page-speed/psol/${NPS_VERSION}.tar.gz -O /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/${NPS_VERSION}.tar.gz; sudo tar -xzvf /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/${NPS_VERSION}.tar.gz"
+RUN /bin/bash -l -c "sudo mkdir -p /etc/ngx_pagespeed; cd /etc/ngx_pagespeed; sudo wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${NPS_VERSION}.zip -O /etc/ngx_pagespeed/release-${NPS_VERSION}.zip; sudo unzip release-${NPS_VERSION}.zip -d /etc/ngx_pagespeed; cd /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/; sudo wget https://dl.google.com/dl/page-speed/psol/${PSOL_VERSION}.tar.gz -O /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/${PSOL_VERSION}.tar.gz; sudo tar -xzvf /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/${PSOL_VERSION}.tar.gz"
 RUN /bin/bash -l -c "cd ~/ && sudo wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && sudo tar xzf nginx-${NGINX_VERSION}.tar.gz && cd nginx-${NGINX_VERSION} && sudo ./configure --prefix=/etc/nginx --add-module=/etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION} ${PS_NGX_EXTRA_FLAGS} && sudo make && sudo make install"
 ADD templates/nginx/nginx_init.sh /etc/init.d/nginx
 RUN /bin/bash -l -c "sudo chmod +x /etc/init.d/nginx && sudo update-rc.d nginx defaults"
