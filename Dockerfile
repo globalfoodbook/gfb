@@ -108,4 +108,4 @@ EXPOSE 5118
 
 # Setup the entrypoint
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
-CMD ["/etc/start.sh"]
+CMD ["/etc/entrypoint.sh"]
