@@ -41,7 +41,7 @@ RUN sudo apt-get install -y git-core php5-redis
 RUN sudo apt-get install -y man
 RUN sudo apt-get install -y phantomjs
 RUN sudo apt-get install -y libgmp-dev
-RUN sudo apt-get install -y
+RUN sudo apt-get install -y zlib1g-dev
 RUN sudo apt-get install -y libxslt-dev
 RUN sudo apt-get install -y libxml2-dev
 RUN sudo apt-get install -y libpcre3 libpcre3-dev
@@ -49,8 +49,7 @@ RUN sudo apt-get install -y freetds-dev
 RUN sudo apt-get install -y openjdk-7-jdk
 RUN sudo apt-get install -y software-properties-common
 RUN sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-# RUN sudo add-apt-repository 'deb http://mirrors.coreix.net/mariadb/repo/10.0/ubuntu trusty main'
-# RUN sudo ln -s /usr/lib/libmagic.so.1 /usr/lib/libmagic.so
+
 RUN sudo apt-get -y update
 RUN sudo apt-get -y install php5-mysql libsqlite3-dev php5 php5-dev php5-curl php-pear php5-fpm php5-gd
 
@@ -104,7 +103,7 @@ RUN sudo sed -i s'/max_execution_time = 30/max_execution_time = 10000/' /etc/php
 
 RUN exp="\nenv[NUT_API] = 'http://10.51.18.2/v1/nutrition/facts?ingredients='"; sudo echo -e "$(cat /etc/php5/fpm/php-fpm.conf)$exp" > ~/php-fpm.conf; sudo mv ~/php-fpm.conf /etc/php5/fpm/php-fpm.conf
 RUN sudo sed -i s'/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/' /etc/php5/fpm/pool.d/www.conf
-# RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER && sudo rm -rf /$MY_USER/logs && sudo ln -s $NGINX_PATH_PREFIX/logs/$MY_USER /$MY_USER/logs
+
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER
 
 RUN sudo echo "Europe/London" | sudo tee /etc/timezone && sudo dpkg-reconfigure --frontend noninteractive tzdata
@@ -113,16 +112,9 @@ RUN if [ ! -f /home/$MY_USER/.oh-my-zsh/ ]; then sudo -u $MY_USER -H git clone g
 RUN sudo -u $MY_USER -H cp /home/$MY_USER/.oh-my-zsh/templates/zshrc.zsh-template /home/$MY_USER/.zshrc
 RUN sudo chsh -s $(which zsh) $MY_USER && zsh && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/$MY_USER/.zshrc
 
-# Add the application to the container (cwd)
-# WORKDIR /$MY_USER
-# ADD ./ /$MY_USER
-# VOLUME ["/$MY_USER"]
 
 ADD templates/entrypoint.sh /etc/entrypoint.sh
 RUN sudo chmod +x /etc/entrypoint.sh
-
-# RUN ln -s /$MY_USER /home/$MY_USER/app
-# RUN sudo chown $NGINX_USER:$NGINX_USER  -R /$MY_USER && sudo find /$MY_USER -type d -exec chmod 755 {} \; && sudo find /$MY_USER -type f -exec chmod 644 {} \;
 
 EXPOSE 80
 EXPOSE 443
