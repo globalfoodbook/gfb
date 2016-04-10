@@ -21,17 +21,16 @@
  max_execution_time = 60 ;
  */
 
+/** Enable W3 Total Cache */
+define('WP_CACHE', true); // Added by W3 Total Cache
+
+/** Enable W3 Total Cache Edge Mode */
+define('W3TC_EDGE_MODE', true); // Added by W3 Total Cache
+
 set_time_limit(6);
 
 define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
 define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
-
-/* MySQL settings */
-// define('DB_NAME',     'gfb');
-// define('DB_USER',     'gfb');
-// define('DB_PASSWORD', '');
-// define('DB_HOST',     '10.51.18.12');
-// define('DB_CHARSET',  'utf8');
 
 define("DB_NAME",     "${MYSQL_ENV_MYSQL_DATABASE}");
 define("DB_USER",     "${MYSQL_ENV_MYSQL_USER}");
@@ -43,7 +42,6 @@ define("DB_CHARSET",  "utf8");
 
 /* MySQL database table prefix. */
 $table_prefix = "${MYSQL_ENV_MYSQL_DATABASE}_";
-
 
 /* Authentication Unique Keys and Salts. */
 /* https://api.wordpress.org/secret-key/1.1/salt/ */
