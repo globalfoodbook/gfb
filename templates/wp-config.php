@@ -39,6 +39,8 @@ define("DB_HOST",     "${MYSQL_PORT_3306_TCP_ADDR}");
 define("DB_PORT",     "${MYSQL_PORT_3306_TCP_PORT}");
 define("DB_CHARSET",  "utf8");
 
+define("DBI_AWS_ACCESS_KEY_ID", "${AWS_ACCESS_KEY}");
+define("DBI_AWS_SECRET_ACCESS_KEY", "${AWS_SECRET_ACCESS_KEY}");
 
 /* MySQL database table prefix. */
 $table_prefix = "${MYSQL_ENV_MYSQL_DATABASE}_";

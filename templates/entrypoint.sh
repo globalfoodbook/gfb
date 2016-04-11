@@ -12,7 +12,7 @@ sudo cp /home/$MY_USER/port_80 $NGINX_PATH_PREFIX/sites-available/port_80;
 sudo cp /home/$MY_USER/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118;
 sudo cp /home/$MY_USER/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf;
 
-for name in MYSQL_ENV_MYSQL_DATABASE MYSQL_ENV_MYSQL_USER MYSQL_ENV_MYSQL_PASSWORD MYSQL_PORT_3306_TCP_ADDR MYSQL_PORT_3306_TCP_PORT
+for name in MYSQL_ENV_MYSQL_DATABASE MYSQL_ENV_MYSQL_USER MYSQL_ENV_MYSQL_PASSWORD MYSQL_PORT_3306_TCP_ADDR MYSQL_PORT_3306_TCP_PORT AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY
 do
     eval value=\$$name;
     sudo sed -i "s|\${${name}}|${value}|g" /home/$MY_USER/app/wp/wp-config.php;
