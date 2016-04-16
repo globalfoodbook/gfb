@@ -10,8 +10,8 @@ wp_redis_obj_file_path="/home/$MY_USER/app/wp/wp-content/plugins/wp-redis/object
 NOW=$(date +"%Y-%m-%d-%H%M")
 
 sudo cp $templates_path/wp-config.php /home/$MY_USER/app/wp/wp-config.php;
-sudo cp $templates_path/index-wp-redis.php /home/$MY_USER/app/wp/index-wp-redis.php;
-sudo cp $templates_path/index.php /home/$MY_USER/app/wp/index.php;
+# sudo cp $templates_path/index-wp-redis.php /home/$MY_USER/app/wp/index-wp-redis.php;
+# sudo cp $templates_path/index.php /home/$MY_USER/app/wp/index.php;
 sudo cp $templates_path/default $NGINX_PATH_PREFIX/sites-available/default;
 sudo cp $templates_path/port_80 $NGINX_PATH_PREFIX/sites-available/port_80;
 sudo cp $templates_path/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118;
@@ -42,14 +42,14 @@ do
 done
 echo -e Environment variables setup completed;
 
-sudo chown -R $NGINX_USER:$NGINX_USER /home/$MY_USER/app > /dev/null 2>&1
-sudo find /home/$MY_USER/app -type d -exec chmod 755 {} \; > /dev/null 2>&1
-sudo find /home/$MY_USER/app -type f -exec chmod 644 {} \; > /dev/null 2>&1
+sudo chown -R $NGINX_USER:$NGINX_USER /home/$MY_USER/app > /dev/null 2>&1 &
+sudo find /home/$MY_USER/app -type d -exec chmod 755 {} \; > /dev/null 2>&1 &
+sudo find /home/$MY_USER/app -type f -exec chmod 644 {} \; > /dev/null 2>&1 &
 
 echo -e Permissions setup completed;
 
 sudo service php5-fpm start
-sudo service nginx start > /dev/null 2>&1
+sudo service nginx start > /dev/null 2>&1 &
 
 echo -e FPM and Ngnix start up is complete;
 
