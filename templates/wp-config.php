@@ -62,6 +62,12 @@ ini_set('display_errors', 1);
 /* WordPress Localized Language. */
 define('WPLANG', '');
 
+$redis_server = array(
+  'host' => '${REDIS_PORT_6379_TCP_ADDR}',
+  'port' => ${REDIS_PORT_6379_TCP_PORT},
+  // 'auth' => '',
+);
+
 
 /* WordPress debug mode for developers. */
 // define('WP_DEBUG',         true);
