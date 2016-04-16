@@ -4,6 +4,11 @@ FROM ubuntu:trusty
 MAINTAINER Ikenna N. Okpala <me@ikennaokpala.com>
 
 # Set up user environment
+
+# Two users are defined one created by nginx and the other the host. This is for security reason www-data is configure accordingly with login disabled:
+# sudo adduser --system --no-create-home --user-group --disabled-login --disabled-password www-data
+#sudo adduser --system --no-create-home --user-group -s /sbin/nologin www-data
+
 ENV MY_USER gfb
 ENV NGINX_USER www-data
 ENV NGINX_PATH_PREFIX /etc/nginx
@@ -65,22 +70,23 @@ RUN /bin/bash -l -c "cd ~/ && sudo wget http://nginx.org/download/nginx-${NGINX_
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/sites-available/
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/sites-enabled/
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER/
+RUN sudo mkdir -p $HOME/templates/
 
 ADD templates/nginx/nginx_init.sh /etc/init.d/nginx
 RUN /bin/bash -l -c "sudo chmod +x /etc/init.d/nginx && sudo update-rc.d nginx defaults"
 
-ADD templates/index-wp-redis.php /home/$MY_USER/index-wp-redis.php
-ADD templates/index.php /home/$MY_USER/index.php
-ADD templates/wp-config.php /home/$MY_USER/wp-config.php
+ADD templates/index-wp-redis.php $HOME/templates/index-wp-redis.php
+ADD templates/index.php $HOME/templates/index.php
+ADD templates/wp-config.php $HOME/templates/wp-config.php
 
 ADD templates/nginx/default $NGINX_PATH_PREFIX/sites-available/default
-ADD templates/nginx/default $HOME/default
+ADD templates/nginx/default $HOME/templates/default
 ADD templates/nginx/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf
-ADD templates/nginx/nginx.conf $HOME/nginx.conf
+ADD templates/nginx/nginx.conf $HOME/templates/nginx.conf
 ADD templates/nginx/port_80 $NGINX_PATH_PREFIX/sites-available/port_80
-ADD templates/nginx/port_80 $HOME/port_80
+ADD templates/nginx/port_80 $HOME/templates/port_80
 ADD templates/nginx/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118
-ADD templates/nginx/port_5118 $HOME/port_5118
+ADD templates/nginx/port_5118 $HOME/templates/port_5118
 
 ADD templates/nginx/w3tc.conf $NGINX_PATH_PREFIX/sites-available/w3tc.conf
 ADD templates/nginx/ngx_page_speed_x.conf $NGINX_PATH_PREFIX/sites-available/ngx_page_speed_x.conf
