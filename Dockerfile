@@ -75,8 +75,6 @@ RUN sudo mkdir -p $HOME/templates/
 ADD templates/nginx/nginx_init.sh /etc/init.d/nginx
 RUN /bin/bash -l -c "sudo chmod +x /etc/init.d/nginx && sudo update-rc.d nginx defaults"
 
-ADD templates/index-wp-redis.php $HOME/templates/index-wp-redis.php
-ADD templates/index.php $HOME/templates/index.php
 ADD templates/wp-config.php $HOME/templates/wp-config.php
 
 ADD templates/nginx/default $NGINX_PATH_PREFIX/sites-available/default

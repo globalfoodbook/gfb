@@ -7,11 +7,8 @@ export WP_HOST_IP=`awk 'NR==1 {print $1}' /etc/hosts`
 templates_path="/home/$MY_USER/templates";
 obj_file_path="/home/$MY_USER/app/wp/wp-content/object-cache.php";
 wp_redis_obj_file_path="/home/$MY_USER/app/wp/wp-content/plugins/wp-redis/object-cache.php";
-NOW=$(date +"%Y-%m-%d-%H%M")
 
 sudo cp $templates_path/wp-config.php /home/$MY_USER/app/wp/wp-config.php;
-# sudo cp $templates_path/index-wp-redis.php /home/$MY_USER/app/wp/index-wp-redis.php;
-# sudo cp $templates_path/index.php /home/$MY_USER/app/wp/index.php;
 sudo cp $templates_path/default $NGINX_PATH_PREFIX/sites-available/default;
 sudo cp $templates_path/port_80 $NGINX_PATH_PREFIX/sites-available/port_80;
 sudo cp $templates_path/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118;
@@ -34,7 +31,6 @@ for name in MYSQL_ENV_MYSQL_DATABASE MYSQL_ENV_MYSQL_USER MYSQL_ENV_MYSQL_PASSWO
 do
     eval value=\$$name;
     sudo sed -i "s|\${${name}}|${value}|g" /home/$MY_USER/app/wp/wp-config.php;
-    # sudo sed -i "s|\${${name}}|${value}|g" /home/$MY_USER/app/wp/index-wp-redis.php;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/conf/nginx.conf;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/default;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_80;
