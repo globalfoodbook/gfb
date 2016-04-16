@@ -24,6 +24,7 @@ ENV LC_ALL en_US.UTF-8
 ENV NGINX_VERSION 1.9.10
 ENV PSOL_VERSION 1.10.33.7
 ENV NPS_VERSION $PSOL_VERSION-beta
+ENV PHPREDIS_VERSION 2.2.7
 
 ENV NGINX_FLAGS --with-file-aio --with-ipv6 --with-http_ssl_module  --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_image_filter_module --with-http_geoip_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_stub_status_module --with-http_perl_module --with-mail --with-mail_ssl_module --with-pcre --with-google_perftools_module --with-debug
 ENV PS_NGX_EXTRA_FLAGS --with-cc=/usr/bin/gcc --with-ld-opt=-static-libstdc++
@@ -63,6 +64,8 @@ RUN /bin/bash -l -c "wget -O- https://download.newrelic.com/548C16BF.gpg | sudo 
 RUN sudo apt-get update -y
 RUN sudo apt-get install -y newrelic-php5
 RUN sudo newrelic-install install
+
+RUN /bin/bash -l -c "sudo wget https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.zip && sudo unzip $PHPREDIS_VERSION.zip && cd phpredis-$PHPREDIS_VERSION && sudo phpize && sudo ./configure && sudo make && sudo make install"
 
 RUN /bin/bash -l -c "sudo mkdir -p /etc/ngx_pagespeed; cd /etc/ngx_pagespeed; sudo wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${NPS_VERSION}.zip -O /etc/ngx_pagespeed/release-${NPS_VERSION}.zip; sudo unzip release-${NPS_VERSION}.zip -d /etc/ngx_pagespeed; cd /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/; sudo wget https://dl.google.com/dl/page-speed/psol/${PSOL_VERSION}.tar.gz -O /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/${PSOL_VERSION}.tar.gz; sudo tar -xzvf /etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION}/${PSOL_VERSION}.tar.gz"
 RUN /bin/bash -l -c "cd ~/ && sudo wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && sudo tar xzf nginx-${NGINX_VERSION}.tar.gz && cd nginx-${NGINX_VERSION} && sudo ./configure --prefix=${NGINX_PATH_PREFIX} --add-module=/etc/ngx_pagespeed/ngx_pagespeed-release-${NPS_VERSION} ${PS_NGX_EXTRA_FLAGS} ${NGINX_FLAGS} && sudo make && sudo make install"
