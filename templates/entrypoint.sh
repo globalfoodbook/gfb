@@ -23,9 +23,9 @@ if [[ ! -f $wp_redis_obj_file_path ]];
 then
   sudo wget https://downloads.wordpress.org/plugin/wp-redis.0.4.0.zip -O $templates_path/wp-redis.0.4.0.zip;
   sudo unzip $templates_path/wp-redis.0.4.0.zip -d /home/$MY_USER/app/wp/wp-content/plugins/;
-  sudo ln -s $wp_redis_obj_file_path $obj_file_path;
-  echo -e WP Redis Setup is completed;
 fi
+sudo ln -s $wp_redis_obj_file_path $obj_file_path;
+echo -e WP Redis Setup is completed;
 
 for name in MYSQL_ENV_MYSQL_DATABASE MYSQL_ENV_MYSQL_USER MYSQL_ENV_MYSQL_PASSWORD MYSQL_PORT_3306_TCP_ADDR MYSQL_PORT_3306_TCP_PORT AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY NGINX_USER NGINX_PATH_PREFIX SERVER_URLS MY_USER REDIS_PORT_6379_TCP_ADDR REDIS_PORT_6379_TCP_PORT WP_HOST_IP
 do
