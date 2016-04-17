@@ -14,17 +14,18 @@ sudo cp $templates_path/port_80 $NGINX_PATH_PREFIX/sites-available/port_80;
 sudo cp $templates_path/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118;
 sudo cp $templates_path/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf;
 
-if [[ -L $obj_file_path ]]; # can also use [[ -h $obj_file_path ]];
-then
-  sudo rm $obj_file_path;
-fi
-
 if [[ ! -f $wp_redis_obj_file_path ]];
 then
   sudo wget https://downloads.wordpress.org/plugin/wp-redis.0.4.0.zip -O $templates_path/wp-redis.0.4.0.zip;
   sudo unzip $templates_path/wp-redis.0.4.0.zip -d /home/$MY_USER/app/wp/wp-content/plugins/;
+  
+  if [[ -L $obj_file_path || -f $obj_file_path ]]; # can also use [[ -h $obj_file_path ]];
+  then
+    sudo rm $obj_file_path;
+    sudo ln -s $wp_redis_obj_file_path $obj_file_path > /dev/null 2>&1 &
+  fi
 fi
-sudo ln -s $wp_redis_obj_file_path $obj_file_path;
+
 echo -e WP Redis Setup is completed;
 
 for name in MYSQL_ENV_MYSQL_DATABASE MYSQL_ENV_MYSQL_USER MYSQL_ENV_MYSQL_PASSWORD MYSQL_PORT_3306_TCP_ADDR MYSQL_PORT_3306_TCP_PORT AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY NGINX_USER NGINX_PATH_PREFIX SERVER_URLS MY_USER REDIS_PORT_6379_TCP_ADDR REDIS_PORT_6379_TCP_PORT WP_HOST_IP
@@ -36,6 +37,7 @@ do
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_80;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_5118;
 done
+
 echo -e Environment variables setup completed;
 
 sudo chown -R $NGINX_USER:$NGINX_USER /home/$MY_USER/app > /dev/null 2>&1 &

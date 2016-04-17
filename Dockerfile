@@ -1,4 +1,4 @@
-# Start with a base Ubuntu 14:04 image
+  # Start with a base Ubuntu 14:04 image
 FROM ubuntu:trusty
 
 MAINTAINER Ikenna N. Okpala <me@ikennaokpala.com>
