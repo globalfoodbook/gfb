@@ -16,9 +16,9 @@ sudo cp $templates_path/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf;
 
 if [[ ! -f $wp_redis_obj_file_path ]];
 then
-  sudo wget https://downloads.wordpress.org/plugin/wp-redis.0.4.0.zip -O $templates_path/wp-redis.0.4.0.zip;
-  sudo unzip $templates_path/wp-redis.0.4.0.zip -d /home/$MY_USER/app/wp/wp-content/plugins/;
-  
+  sudo wget https://github.com/globalfoodbook/wp-redis/archive/0.4.0.zip -O $templates_path/0.4.0.zip;
+  sudo unzip -j $templates_path/0.4.0.zip "wp-redis-0.4.0/*" -d /home/$MY_USER/app/wp/wp-content/plugins/wp-redis;
+
   if [[ -L $obj_file_path || -f $obj_file_path ]]; # can also use [[ -h $obj_file_path ]];
   then
     sudo rm $obj_file_path;
