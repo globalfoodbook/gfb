@@ -45,6 +45,7 @@ RUN sudo apt-get install -y libxslt1-dev libgd2-xpm-dev libgeoip-dev libgoogle-p
 RUN sudo apt-get install -y pkg-config libssl-dev
 RUN sudo apt-get install -y git-core php5-redis
 RUN sudo apt-get install -y man
+RUN sudo apt-get install -y imagemagick php5-imagick
 RUN sudo apt-get install -y phantomjs
 RUN sudo apt-get install -y libgmp-dev
 RUN sudo apt-get install -y zlib1g-dev
