@@ -105,8 +105,9 @@ RUN sudo tar xzf /usr/local/ioncube_loaders_lin_x86-64.tar.gz && sudo rm -f ionc
 
 RUN zend_ext="\n\nzend_extension=/usr/local/ioncube/ioncube_loader_lin_5.5.so"; sudo echo -e "$(cat /etc/php5/fpm/php.ini)$zend_ext" > ~/php.ini; sudo mv ~/php.ini /etc/php5/fpm/php.ini
 RUN sudo sed -i s'/variables_order = "GPCS"/variables_order = "EGPCS"/' /etc/php5/fpm/php.ini
-RUN sudo sed -i s'/upload_max_filesize = 2M/upload_max_filesize = 200M/' /etc/php5/fpm/php.ini
-RUN sudo sed -i s'/post_max_size = 8M/post_max_size = 250M/' /etc/php5/fpm/php.ini
+RUN sudo sed -i s'/memory_limit = 128M/memory_limit = 3000M/' /etc/php5/fpm/php.ini
+RUN sudo sed -i s'/upload_max_filesize = 2M/upload_max_filesize = 1000M/' /etc/php5/fpm/php.ini
+RUN sudo sed -i s'/post_max_size = 8M/post_max_size = 2000M/' /etc/php5/fpm/php.ini
 RUN sudo sed -i s'/max_execution_time = 30/max_execution_time = 10000/' /etc/php5/fpm/php.ini
 
 RUN exp="\nenv[NUT_API] = 'http://10.51.18.2/v1/nutrition/facts?ingredients='"; sudo echo -e "$(cat /etc/php5/fpm/php-fpm.conf)$exp" > ~/php-fpm.conf; sudo mv ~/php-fpm.conf /etc/php5/fpm/php-fpm.conf

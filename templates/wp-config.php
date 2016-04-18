@@ -41,6 +41,7 @@ define("DB_CHARSET",  "utf8");
 
 define("DBI_AWS_ACCESS_KEY_ID", "${AWS_ACCESS_KEY}");
 define("DBI_AWS_SECRET_ACCESS_KEY", "${AWS_SECRET_ACCESS_KEY}");
+define('WP_MEMORY_LIMIT', '3000M');
 
 /* MySQL database table prefix. */
 $table_prefix = "${MYSQL_ENV_MYSQL_DATABASE}_";
