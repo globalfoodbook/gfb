@@ -115,6 +115,7 @@ RUN sudo sed -i s'/max_execution_time = 30/max_execution_time = 10000/' /etc/php
 
 RUN exp="\nenv[NUT_API] = '$NUT_API_URL'"; sudo echo -e "$(cat /etc/php5/fpm/php-fpm.conf)$exp" > ~/php-fpm.conf; sudo mv ~/php-fpm.conf /etc/php5/fpm/php-fpm.conf
 RUN sudo sed -i s'/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/' /etc/php5/fpm/pool.d/www.conf
+RUN sudo sed -i s'/;request_terminate_timeout = 0/request_terminate_timeout = 500/' /etc/php5/fpm/pool.d/www.conf
 
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER
 
