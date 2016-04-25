@@ -5,10 +5,10 @@ set -e
 export WP_HOST_IP=`awk 'NR==1 {print $1}' /etc/hosts`
 
 templates_path="/home/$MY_USER/templates";
-obj_file_path="/home/$MY_USER/app/wp/wp-content/object-cache.php";
-wp_redis_obj_file_path="/home/$MY_USER/app/wp/wp-content/plugins/wp-redis/object-cache.php";
+obj_file_path="$APP_HOME/wp/wp-content/object-cache.php";
+wp_redis_obj_file_path="$APP_HOME/wp/wp-content/plugins/wp-redis/object-cache.php";
 
-sudo cp $templates_path/wp-config.php /home/$MY_USER/app/wp/wp-config.php;
+sudo cp $templates_path/wp-config.php $APP_HOME/wp/wp-config.php;
 sudo cp $templates_path/default $NGINX_PATH_PREFIX/sites-available/default;
 sudo cp $templates_path/port_80 $NGINX_PATH_PREFIX/sites-available/port_80;
 sudo cp $templates_path/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118;
@@ -17,7 +17,7 @@ sudo cp $templates_path/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf;
 if [[ ! -f $wp_redis_obj_file_path ]];
 then
   sudo wget https://github.com/globalfoodbook/wp-redis/archive/v0.4.0.zip -O $templates_path/v0.4.0.zip;
-  sudo unzip -j $templates_path/v0.4.0.zip -d /home/$MY_USER/app/wp/wp-content/plugins/wp-redis;
+  sudo unzip -j $templates_path/v0.4.0.zip -d $APP_HOME/wp/wp-content/plugins/wp-redis;
 
   if [[ -L $obj_file_path || -f $obj_file_path ]]; # can also use [[ -h $obj_file_path ]];
   then
@@ -31,7 +31,7 @@ echo -e WP Redis Setup is completed;
 for name in MYSQL_ENV_MYSQL_DATABASE MYSQL_ENV_MYSQL_USER MYSQL_ENV_MYSQL_PASSWORD MYSQL_PORT_3306_TCP_ADDR MYSQL_PORT_3306_TCP_PORT AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY NGINX_USER NGINX_PATH_PREFIX SERVER_URLS MY_USER REDIS_PORT_6379_TCP_ADDR REDIS_PORT_6379_TCP_PORT WP_HOST_IP
 do
     eval value=\$$name;
-    sudo sed -i "s|\${${name}}|${value}|g" /home/$MY_USER/app/wp/wp-config.php;
+    sudo sed -i "s|\${${name}}|${value}|g" $APP_HOME/wp/wp-config.php;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/conf/nginx.conf;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/default;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_80;
@@ -40,9 +40,9 @@ done
 
 echo -e Environment variables setup completed;
 
-sudo chown -R $NGINX_USER:$NGINX_USER /home/$MY_USER/app > /dev/null 2>&1 &
-sudo find /home/$MY_USER/app -type d -exec chmod 755 {} \; > /dev/null 2>&1 &
-sudo find /home/$MY_USER/app -type f -exec chmod 644 {} \; > /dev/null 2>&1 &
+sudo chown -R $NGINX_USER:$NGINX_USER $APP_HOME > /dev/null 2>&1 &
+sudo find $APP_HOME -type d -exec chmod 755 {} \; > /dev/null 2>&1 &
+sudo find $APP_HOME -type f -exec chmod 644 {} \; > /dev/null 2>&1 &
 
 echo -e Permissions setup completed;
 

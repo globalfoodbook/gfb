@@ -10,16 +10,20 @@ MAINTAINER Ikenna N. Okpala <me@ikennaokpala.com>
 #sudo adduser --system --no-create-home --user-group -s /sbin/nologin www-data
 
 ENV MY_USER gfb
-ENV NGINX_USER www-data
+ENV WEB_USER www-data
+ENV NGINX_USER $MY_USER
+
 ENV NGINX_PATH_PREFIX /etc/nginx
+ENV SERVER_URLS globalfoodbook.com www.globalfoodbook.com globalfoodbook.net www.globalfoodbook.net globalfoodbook.org www.globalfoodbook.org globalfoodbook.co.uk www.globalfoodbook.co.uk
+
 ENV DEBIAN_FRONTEND noninteractive
 
 ENV NUT_API_IP 10.51.18.2
 ENV NUT_API_URL http://$NUT_API_IP/v1/nutrition/facts?ingredients=
 
-ENV SERVER_URLS globalfoodbook.com www.globalfoodbook.com globalfoodbook.net www.globalfoodbook.net globalfoodbook.org www.globalfoodbook.org globalfoodbook.co.uk www.globalfoodbook.co.uk
-
 ENV HOME /home/$MY_USER
+ENV APP_HOME /home/$MY_USER/app
+
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.en
 ENV LC_ALL en_US.UTF-8
@@ -114,8 +118,14 @@ RUN sudo sed -i s'/post_max_size = 8M/post_max_size = 2000M/' /etc/php5/fpm/php.
 RUN sudo sed -i s'/max_execution_time = 30/max_execution_time = 10000/' /etc/php5/fpm/php.ini
 
 RUN exp="\nenv[NUT_API] = '$NUT_API_URL'"; sudo echo -e "$(cat /etc/php5/fpm/php-fpm.conf)$exp" > ~/php-fpm.conf; sudo mv ~/php-fpm.conf /etc/php5/fpm/php-fpm.conf
+
 RUN sudo sed -i s'/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/' /etc/php5/fpm/pool.d/www.conf
 RUN sudo sed -i s'/;request_terminate_timeout = 0/request_terminate_timeout = 500/' /etc/php5/fpm/pool.d/www.conf
+
+RUN sudo sed -i s"/user = $WEB_USER/user = $NGINX_USER/" /etc/php5/fpm/pool.d/www.conf
+RUN sudo sed -i s"/group = $WEB_USER/group = $NGINX_USER/" /etc/php5/fpm/pool.d/www.conf
+RUN sudo sed -i s"/listen.owner = $WEB_USER/listen.owner = $NGINX_USER/" /etc/php5/fpm/pool.d/www.conf
+RUN sudo sed -i s"/listen.group = $WEB_USER/listen.group = $NGINX_USER/" /etc/php5/fpm/pool.d/www.conf
 
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER
 
