@@ -18,13 +18,13 @@ if [[ ! -f $wp_redis_obj_file_path ]];
 then
   sudo wget https://github.com/globalfoodbook/wp-redis/archive/v0.4.0.zip -O $templates_path/v0.4.0.zip;
   sudo unzip -j $templates_path/v0.4.0.zip -d $APP_HOME/wp/wp-content/plugins/wp-redis;
-
-  if [[ -L $obj_file_path || -f $obj_file_path ]]; # can also use [[ -h $obj_file_path ]];
-  then
-    sudo rm $obj_file_path;
-    sudo ln -s $wp_redis_obj_file_path $obj_file_path > /dev/null 2>&1 &
-  fi
 fi
+
+if [[ -L $obj_file_path || -f $obj_file_path ]]; # if object-cache symlink or file exists.. for symlink check this you can also use [[ -h $obj_file_path ]];
+then
+  sudo rm $obj_file_path;
+fi
+sudo ln -s $wp_redis_obj_file_path $obj_file_path > /dev/null 2>&1 &
 
 echo -e WP Redis Setup is completed;
 
