@@ -106,11 +106,13 @@ RUN sudo cp $NGINX_PATH_PREFIX/conf/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.con
 RUN sudo rm $NGINX_PATH_PREFIX/conf/nginx.conf && cd $NGINX_PATH_PREFIX/conf/
 RUN sudo rm -rf /home/$MY_USER/nginx-${NGINX_VERSION}*
 
-RUN cd /usr/local
+WORKDIR /usr/local
+
 RUN /bin/bash -l -c "sudo wget http://downloads2.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz -O /usr/local/ioncube_loaders_lin_x86-64.tar.gz"
 RUN sudo tar xzf /usr/local/ioncube_loaders_lin_x86-64.tar.gz && sudo rm -f ioncube_loaders_lin_x86-64.tar.gz
 
-RUN zend_ext="\n\nzend_extension=/usr/local/ioncube/ioncube_loader_lin_5.5.so"; sudo echo -e "$(cat /etc/php5/fpm/php.ini)$zend_ext" > ~/php.ini; sudo mv ~/php.ini /etc/php5/fpm/php.ini
+RUN zend_ext="\n\nzend_extension=/usr/local/ioncube/ioncube_loader_lin_5.5.so" && sudo echo -e "$(cat /etc/php5/fpm/php.ini)$zend_ext" > ~/php.ini && sudo mv ~/php.ini /etc/php5/fpm/php.ini
+
 RUN sudo sed -i s'/variables_order = "GPCS"/variables_order = "EGPCS"/' /etc/php5/fpm/php.ini
 RUN sudo sed -i s'/memory_limit = 128M/memory_limit = 3000M/' /etc/php5/fpm/php.ini
 RUN sudo sed -i s'/upload_max_filesize = 2M/upload_max_filesize = 1000M/' /etc/php5/fpm/php.ini
@@ -138,6 +140,8 @@ RUN sudo chsh -s $(which zsh) $MY_USER && zsh && sed -i 's/ZSH_THEME="robbyrusse
 
 ADD templates/entrypoint.sh /etc/entrypoint.sh
 RUN sudo chmod +x /etc/entrypoint.sh
+
+WORKDIR $APP_HOME
 
 EXPOSE 80
 EXPOSE 443
