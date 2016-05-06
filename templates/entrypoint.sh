@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -x
 
 export WP_HOST_IP=`awk 'NR==1 {print $1}' /etc/hosts`
 
@@ -16,8 +17,8 @@ sudo cp $templates_path/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf;
 
 if [[ ! -f $wp_redis_obj_file_path ]];
 then
-  sudo wget https://github.com/globalfoodbook/wp-redis/archive/v0.4.0.zip -O $templates_path/v0.4.0.zip;
-  sudo unzip -j $templates_path/v0.4.0.zip -d $APP_HOME/wp/wp-content/plugins/wp-redis;
+  sudo wget https://github.com/globalfoodbook/wp-redis/archive/v$WP_REDIS_VERSION.zip -O $templates_path/v$WP_REDIS_VERSION.zip;
+  sudo unzip -j $templates_path/v$WP_REDIS_VERSION.zip -d $APP_HOME/wp/wp-content/plugins/wp-redis;
 fi
 
 if [[ -L $obj_file_path || -f $obj_file_path ]]; # if object-cache symlink or file exists.. for symlink check this you can also use [[ -h $obj_file_path ]];
