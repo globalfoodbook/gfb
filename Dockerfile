@@ -18,8 +18,10 @@ ENV SERVER_URLS globalfoodbook.com www.globalfoodbook.com globalfoodbook.net www
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV NUT_API_IP 10.51.18.2
-ENV NUT_API_URL http://$NUT_API_IP/v1/nutrition/facts?ingredients=
+ENV NUT_API_IP 127.0.0.1
+ENV NUT_API_PORT 8080
+ENV NUT_API_IP_PORT $NUT_API_IP:$NUT_API_PORT
+ENV NUT_API_URL http://$NUT_API_IP_PORT/v1/nutrition/facts?ingredients=
 
 ENV HOME /home/$MY_USER
 ENV APP_HOME /home/$MY_USER/app
@@ -120,7 +122,7 @@ RUN sudo sed -i s'/upload_max_filesize = 2M/upload_max_filesize = 1000M/' /etc/p
 RUN sudo sed -i s'/post_max_size = 8M/post_max_size = 2000M/' /etc/php5/fpm/php.ini
 RUN sudo sed -i s'/max_execution_time = 30/max_execution_time = 10000/' /etc/php5/fpm/php.ini
 
-RUN exp="\nenv[NUT_API] = '$NUT_API_URL'"; sudo echo -e "$(cat /etc/php5/fpm/php-fpm.conf)$exp" > ~/php-fpm.conf; sudo mv ~/php-fpm.conf /etc/php5/fpm/php-fpm.conf
+RUN exp="\n\nenv[NUT_API] = '$NUT_API_URL'"; sudo echo -e "$(cat /etc/php5/fpm/php-fpm.conf)$exp" > ~/php-fpm.conf; sudo mv ~/php-fpm.conf /etc/php5/fpm/php-fpm.conf
 
 RUN sudo sed -i s'/listen = \/var\/run\/php5-fpm.sock/listen = 127.0.0.1:9000/' /etc/php5/fpm/pool.d/www.conf
 RUN sudo sed -i s'/;request_terminate_timeout = 0/request_terminate_timeout = 500/' /etc/php5/fpm/pool.d/www.conf
@@ -137,7 +139,6 @@ RUN sudo apt-get -y install zsh
 RUN if [ ! -f /home/$MY_USER/.oh-my-zsh/ ]; then sudo -u $MY_USER -H git clone git://github.com/robbyrussell/oh-my-zsh.git /home/$MY_USER/.oh-my-zsh;fi
 RUN sudo -u $MY_USER -H cp /home/$MY_USER/.oh-my-zsh/templates/zshrc.zsh-template /home/$MY_USER/.zshrc
 RUN sudo chsh -s $(which zsh) $MY_USER && zsh && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/$MY_USER/.zshrc
-
 
 ADD templates/entrypoint.sh /etc/entrypoint.sh
 RUN sudo chmod +x /etc/entrypoint.sh

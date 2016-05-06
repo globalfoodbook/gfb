@@ -41,6 +41,10 @@ done
 
 echo -e Environment variables setup completed;
 
+if [[ $NLS_PORT_80_TCP_ADDR ]]; then
+  sudo sed -ie s"/^env\[NUT_API].*'$/env[NUT_API] = 'http:\/\/$NLS_PORT_80_TCP_ADDR\/v1\/nutrition\/facts?ingredients='/g" /etc/php5/fpm/php-fpm.conf
+fi
+
 sudo chown -R $NGINX_USER:$NGINX_USER $APP_HOME > /dev/null 2>&1 &
 sudo find $APP_HOME -type d -exec chmod 755 {} \; > /dev/null 2>&1 &
 sudo find $APP_HOME -type f -exec chmod 644 {} \; > /dev/null 2>&1 &
