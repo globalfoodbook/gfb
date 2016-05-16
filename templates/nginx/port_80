@@ -1,4 +1,4 @@
 server {
   listen 80;
-  include ${NGINX_PATH_PREFIX}/sites-available/default;
+  include ${NGINX_PATH_PREFIX}/conf/${MY_USER}/default;
 }

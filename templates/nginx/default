@@ -5,8 +5,8 @@ error_log ${NGINX_PATH_PREFIX}/logs/${MY_USER}/error.log;
 error_page 404 = /error/404;
 port_in_redirect off;
 
-include ${NGINX_PATH_PREFIX}/sites-available/w3tc.conf;
-include ${NGINX_PATH_PREFIX}/sites-available/ngx_page_speed_x.conf;
+include ${NGINX_PATH_PREFIX}/conf/${MY_USER}/w3tc.conf;
+include ${NGINX_PATH_PREFIX}/conf/${MY_USER}/ngx_page_speed_x.conf;
 
 #rewrite ^/recipe-items/(.*)/(%EF%BB%BF)$ /$1/$2;
 rewrite ^(/de/detail/)(.*)$ http:// permanent;

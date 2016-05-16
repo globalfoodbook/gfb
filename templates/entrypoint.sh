@@ -10,7 +10,7 @@ obj_file_path="$APP_HOME/wp/wp-content/object-cache.php";
 wp_redis_obj_file_path="$APP_HOME/wp/wp-content/plugins/wp-redis/object-cache.php";
 
 sudo cp $templates_path/wp-config.php $APP_HOME/wp/wp-config.php;
-sudo cp $templates_path/default $NGINX_PATH_PREFIX/sites-available/default;
+sudo cp $templates_path/default $NGINX_PATH_PREFIX/conf/$MY_USER/default;
 sudo cp $templates_path/port_80 $NGINX_PATH_PREFIX/sites-available/port_80;
 sudo cp $templates_path/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118;
 sudo cp $templates_path/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf;
@@ -34,7 +34,7 @@ do
     eval value=\$$name;
     sudo sed -i "s|\${${name}}|${value}|g" $APP_HOME/wp/wp-config.php;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/conf/nginx.conf;
-    sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/default;
+    sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/conf/$MY_USER/default;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_80;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_5118;
 done

@@ -84,6 +84,7 @@ RUN /bin/bash -l -c "cd ~/ && sudo wget http://nginx.org/download/nginx-${NGINX_
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/sites-available/
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/sites-enabled/
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER/
+RUN sudo mkdir -p $NGINX_PATH_PREFIX/conf/$MY_USER/
 RUN sudo mkdir -p $HOME/templates/
 
 ADD templates/nginx/nginx_init.sh /etc/init.d/nginx
@@ -91,7 +92,7 @@ RUN /bin/bash -l -c "sudo chmod +x /etc/init.d/nginx && sudo update-rc.d nginx d
 
 ADD templates/wp-config.php $HOME/templates/wp-config.php
 
-ADD templates/nginx/default $NGINX_PATH_PREFIX/sites-available/default
+ADD templates/nginx/default $NGINX_PATH_PREFIX/conf/$MY_USER/default
 ADD templates/nginx/default $HOME/templates/default
 ADD templates/nginx/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf
 ADD templates/nginx/nginx.conf $HOME/templates/nginx.conf
@@ -100,8 +101,8 @@ ADD templates/nginx/port_80 $HOME/templates/port_80
 ADD templates/nginx/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118
 ADD templates/nginx/port_5118 $HOME/templates/port_5118
 
-ADD templates/nginx/w3tc.conf $NGINX_PATH_PREFIX/sites-available/w3tc.conf
-ADD templates/nginx/ngx_page_speed_x.conf $NGINX_PATH_PREFIX/sites-available/ngx_page_speed_x.conf
+ADD templates/nginx/w3tc.conf $NGINX_PATH_PREFIX/conf/$MY_USER/w3tc.conf
+ADD templates/nginx/ngx_page_speed_x.conf $NGINX_PATH_PREFIX/conf/$MY_USER/ngx_page_speed_x.conf
 
 RUN sudo ln -s $NGINX_PATH_PREFIX/sites-available/port_80 $NGINX_PATH_PREFIX/sites-enabled/port_80
 RUN sudo ln -s $NGINX_PATH_PREFIX/sites-available/port_5118 $NGINX_PATH_PREFIX/sites-enabled/port_5118
