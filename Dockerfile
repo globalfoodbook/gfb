@@ -1,4 +1,4 @@
-  # Start with a base Ubuntu 14:04 image
+# Start with a base Ubuntu 14:04 image
 FROM ubuntu:trusty
 
 MAINTAINER Ikenna N. Okpala <me@ikennaokpala.com>
@@ -53,8 +53,8 @@ RUN sudo apt-get install -y libnotify-dev imagemagick libmagickwand-dev
 RUN sudo apt-get install -y libfuse-dev libcurl4-openssl-dev mime-support automake libtool python-docutils libreadline-dev
 RUN sudo apt-get install -y libxslt1-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libperl-dev
 RUN sudo apt-get install -y pkg-config libssl-dev
-RUN sudo apt-get install -y git-core php5-redis
-RUN sudo apt-get install -y man
+RUN sudo apt-get install -y git-core subversion php5-redis
+RUN sudo apt-get install -y man php5-cli
 RUN sudo apt-get install -y imagemagick php5-imagick
 RUN sudo apt-get install -y phantomjs
 RUN sudo apt-get install -y libgmp-dev
@@ -109,6 +109,7 @@ RUN sudo ln -s $NGINX_PATH_PREFIX/sites-available/port_5118 $NGINX_PATH_PREFIX/s
 RUN sudo cp $NGINX_PATH_PREFIX/conf/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf.default
 RUN sudo rm $NGINX_PATH_PREFIX/conf/nginx.conf && cd $NGINX_PATH_PREFIX/conf/
 RUN sudo rm -rf /home/$MY_USER/nginx-${NGINX_VERSION}*
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /usr/local
 
@@ -135,11 +136,7 @@ RUN sudo sed -i s"/listen.group = $WEB_USER/listen.group = $NGINX_USER/" /etc/ph
 
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER
 
-RUN sudo echo "Europe/London" | sudo tee /etc/timezone && sudo dpkg-reconfigure --frontend noninteractive tzdata
-RUN sudo apt-get -y install zsh
-RUN if [ ! -f /home/$MY_USER/.oh-my-zsh/ ]; then sudo -u $MY_USER -H git clone git://github.com/robbyrussell/oh-my-zsh.git /home/$MY_USER/.oh-my-zsh;fi
-RUN sudo -u $MY_USER -H cp /home/$MY_USER/.oh-my-zsh/templates/zshrc.zsh-template /home/$MY_USER/.zshrc
-RUN sudo chsh -s $(which zsh) $MY_USER && zsh && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="ys"/g' /home/$MY_USER/.zshrc
+RUN sudo echo "Europe/London" | sudo tee /etc/timezone && sudo dpkg-reconfigure --frontend $DEBIAN_FRONTEND tzdata
 
 ADD templates/entrypoint.sh /etc/entrypoint.sh
 RUN sudo chmod +x /etc/entrypoint.sh
