@@ -25,6 +25,7 @@ ENV NUT_API_URL http://$NUT_API_IP_PORT/v1/nutrition/facts?ingredients=
 
 ENV HOME /home/$MY_USER
 ENV APP_HOME /home/$MY_USER/app
+ENV WP_HOME $APP_HOME/wp
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.en
