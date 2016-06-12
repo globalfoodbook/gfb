@@ -32,11 +32,11 @@ set_time_limit(6);
 define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
 define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
 
-define("DB_NAME",     "${MYSQL_ENV_MYSQL_DATABASE}");
-define("DB_USER",     "${MYSQL_ENV_MYSQL_USER}");
-define("DB_PASSWORD", "${MYSQL_ENV_MYSQL_PASSWORD}");
-define("DB_HOST",     "${MYSQL_PORT_3306_TCP_ADDR}");
-define("DB_PORT",     "${MYSQL_PORT_3306_TCP_PORT}");
+define("DB_NAME",     "${MARIADB_ENV_MARIADB_DATABASE}");
+define("DB_USER",     "${MARIADB_ENV_MARIADB_USER}");
+define("DB_PASSWORD", "${MARIADB_ENV_MARIADB_PASSWORD}");
+define("DB_HOST",     "${MARIADB_PORT_3306_TCP_ADDR}");
+define("DB_PORT",     "${MARIADB_PORT_3306_TCP_PORT}");
 define("DB_CHARSET",  "utf8");
 
 define("DBI_AWS_ACCESS_KEY_ID", "${AWS_ACCESS_KEY}");
@@ -44,7 +44,7 @@ define("DBI_AWS_SECRET_ACCESS_KEY", "${AWS_SECRET_ACCESS_KEY}");
 define('WP_MEMORY_LIMIT', '3000M');
 
 /* MySQL database table prefix. */
-$table_prefix = "${MYSQL_ENV_MYSQL_DATABASE}_";
+$table_prefix = "${MARIADB_ENV_MARIADB_DATABASE}_";
 
 /* Authentication Unique Keys and Salts. */
 /* https://api.wordpress.org/secret-key/1.1/salt/ */
