@@ -37,6 +37,11 @@ ENV NPS_VERSION $PSOL_VERSION-beta
 ENV PHPREDIS_VERSION 2.2.7
 ENV WP_REDIS_VERSION 0.5.0
 
+ENV GCS_MEDIA_BUCKET assets.globalfoodbook.net
+ENV GCS_MEDIA_MODE cdn
+ENV GCS_MEDIA_KEY_FILE_PATH /gcs/media.p12
+ENV GCS_MEDIA_SERVICE_ACCOUNT we@globalfoodbook.com
+
 ENV NGINX_FLAGS --with-file-aio --with-ipv6 --with-http_ssl_module  --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_image_filter_module --with-http_geoip_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_stub_status_module --with-http_perl_module --with-mail --with-mail_ssl_module --with-pcre --with-google_perftools_module --with-debug
 ENV PS_NGX_EXTRA_FLAGS --with-cc=/usr/bin/gcc --with-ld-opt=-static-libstdc++
 
