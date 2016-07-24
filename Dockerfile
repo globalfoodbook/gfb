@@ -27,6 +27,8 @@ ENV HOME /home/$MY_USER
 ENV APP_HOME /home/$MY_USER/app
 ENV WP_HOME $APP_HOME/wp
 
+ENV LETSENCRYPT_WEB_HOME $APP_HOME/letsencrypt
+
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.en
 ENV LC_ALL en_US.UTF-8
@@ -51,26 +53,14 @@ USER $MY_USER
 
 # Add all base dependencies
 RUN sudo apt-get update -y
-
-RUN sudo apt-get install -y build-essential checkinstall
-RUN sudo apt-get install -y language-pack-en-base
-RUN sudo apt-get install -y vim curl tmux wget unzip
-RUN sudo apt-get install -y libnotify-dev imagemagick libmagickwand-dev
-RUN sudo apt-get install -y libfuse-dev libcurl4-openssl-dev mime-support automake libtool python-docutils libreadline-dev
-RUN sudo apt-get install -y libxslt1-dev libgd2-xpm-dev libgeoip-dev libgoogle-perftools-dev libperl-dev
-RUN sudo apt-get install -y pkg-config libssl-dev
-RUN sudo apt-get install -y git-core subversion php5-redis
-RUN sudo apt-get install -y man php5-cli
-RUN sudo apt-get install -y imagemagick php5-imagick
-RUN sudo apt-get install -y phantomjs
-RUN sudo apt-get install -y libgmp-dev
-RUN sudo apt-get install -y zlib1g-dev
-RUN sudo apt-get install -y libxslt-dev
-RUN sudo apt-get install -y libxml2-dev
-RUN sudo apt-get install -y libpcre3 libpcre3-dev
-RUN sudo apt-get install -y freetds-dev
-RUN sudo apt-get install -y openjdk-7-jdk
-RUN sudo apt-get install -y software-properties-common
+RUN sudo apt-get install -y build-essential checkinstall language-pack-en-base \
+  vim curl tmux wget unzip libnotify-dev imagemagick libmagickwand-dev \
+  libfuse-dev libcurl4-openssl-dev mime-support automake libtool \
+  python-docutils libreadline-dev libxslt1-dev libgd2-xpm-dev libgeoip-dev \
+  libgoogle-perftools-dev libperl-dev pkg-config libssl-dev git-core \
+  subversion php5-redis man php5-cli imagemagick php5-imagick phantomjs \
+  libgmp-dev zlib1g-dev libxslt-dev libxml2-dev libpcre3 libpcre3-dev \
+  freetds-dev openjdk-7-jdk software-properties-common
 RUN sudo apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
 
 RUN sudo apt-get -y update
@@ -104,6 +94,8 @@ ADD templates/nginx/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf
 ADD templates/nginx/nginx.conf $HOME/templates/nginx.conf
 ADD templates/nginx/port_80 $NGINX_PATH_PREFIX/sites-available/port_80
 ADD templates/nginx/port_80 $HOME/templates/port_80
+ADD templates/nginx/port_443 $NGINX_PATH_PREFIX/sites-available/port_443
+ADD templates/nginx/port_443 $HOME/templates/port_443
 ADD templates/nginx/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118
 ADD templates/nginx/port_5118 $HOME/templates/port_5118
 
@@ -111,6 +103,7 @@ ADD templates/nginx/w3tc.conf $NGINX_PATH_PREFIX/conf/$MY_USER/w3tc.conf
 ADD templates/nginx/ngx_page_speed_x.conf $NGINX_PATH_PREFIX/conf/$MY_USER/ngx_page_speed_x.conf
 
 RUN sudo ln -s $NGINX_PATH_PREFIX/sites-available/port_80 $NGINX_PATH_PREFIX/sites-enabled/port_80
+RUN sudo ln -s $NGINX_PATH_PREFIX/sites-available/port_443 $NGINX_PATH_PREFIX/sites-enabled/port_443
 RUN sudo ln -s $NGINX_PATH_PREFIX/sites-available/port_5118 $NGINX_PATH_PREFIX/sites-enabled/port_5118
 RUN sudo cp $NGINX_PATH_PREFIX/conf/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf.default
 RUN sudo rm $NGINX_PATH_PREFIX/conf/nginx.conf && cd $NGINX_PATH_PREFIX/conf/
@@ -143,6 +136,16 @@ RUN sudo sed -i s"/listen.group = $WEB_USER/listen.group = $NGINX_USER/" /etc/ph
 RUN sudo mkdir -p $NGINX_PATH_PREFIX/logs/$MY_USER
 
 RUN sudo echo "Europe/London" | sudo tee /etc/timezone && sudo dpkg-reconfigure --frontend $DEBIAN_FRONTEND tzdata
+
+RUN sudo mkdir -p /opt/letsencrypt/ && sudo mkdir -p etc/letsencrypt/configs/ && sudo mkdir -p /var/log/letsencrypt/
+
+ADD templates/letsencrypt/renew-letsencrypt.sh /etc/renew-letsencrypt.sh
+RUN sudo chmod +x /etc/renew-letsencrypt.sh
+
+ADD templates/letsencrypt/globalfoodbook.com.conf /etc/letsencrypt/configs/globalfoodbook.com.conf
+
+RUN sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
+RUN cd /opt/letsencrypt/ && sudo ./letsencrypt-auto; exit 0
 
 ADD templates/entrypoint.sh /etc/entrypoint.sh
 RUN sudo chmod +x /etc/entrypoint.sh

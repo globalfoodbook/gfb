@@ -1,0 +1,7 @@
+server {
+    listen 443 ssl default_server;
+    include ${NGINX_PATH_PREFIX}/conf/${MY_USER}/default;
+
+    ssl_certificate /etc/letsencrypt/live/globalfoodbook.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/globalfoodbook.com/privkey.pem;
+}

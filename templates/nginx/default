@@ -1,5 +1,5 @@
 server_name ${SERVER_URLS};
-root /home/${MY_USER}/app/wp;
+root ${WP_HOME};
 access_log ${NGINX_PATH_PREFIX}/logs/${MY_USER}/access.log;
 error_log ${NGINX_PATH_PREFIX}/logs/${MY_USER}/error.log;
 error_page 404 = /error/404;
@@ -9,6 +9,7 @@ include ${NGINX_PATH_PREFIX}/conf/${MY_USER}/w3tc.conf;
 include ${NGINX_PATH_PREFIX}/conf/${MY_USER}/ngx_page_speed_x.conf;
 
 #rewrite ^/recipe-items/(.*)/(%EF%BB%BF)$ /$1/$2;
+rewrite ^/recipe-items/(.*)$ /recipes/$1;
 rewrite ^(/de/detail/)(.*)$ http:// permanent;
 rewrite ^/sitemapindex\.xml$ /index.php?sitemap=1 last;
 rewrite ^/([^/]+?)_part([0-9]+)?\.xml$ /index.php?sitemap=$1&sitemap_n=$2 last;
@@ -38,4 +39,8 @@ location ~ \.php$ {
 }
 location @extensionless-php {
   rewrite ^(.*)$ $1.php last;
+}
+
+location /.well-known/acme-challenge {
+  root ${LETSENCRYPT_WEB_HOME};
 }
