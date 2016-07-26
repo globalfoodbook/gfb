@@ -12,8 +12,10 @@ wp_redis_obj_file_path="$WP_HOME/wp-content/plugins/wp-redis/object-cache.php";
 sudo cp $templates_path/wp-config.php $WP_HOME/wp-config.php;
 sudo cp $templates_path/default $NGINX_PATH_PREFIX/conf/$MY_USER/default;
 sudo cp $templates_path/port_80 $NGINX_PATH_PREFIX/sites-available/port_80;
+sudo cp $templates_path/port_443 $NGINX_PATH_PREFIX/sites-available/port_443;
 sudo cp $templates_path/port_5118 $NGINX_PATH_PREFIX/sites-available/port_5118;
 sudo cp $templates_path/nginx.conf $NGINX_PATH_PREFIX/conf/nginx.conf;
+sudo cp $templates_path/lua_conf $NGINX_PATH_PREFIX/lua_ssl/lua_conf;
 
 if [[ ! -f $wp_redis_obj_file_path ]];
 then
@@ -29,13 +31,15 @@ sudo ln -s $wp_redis_obj_file_path $obj_file_path > /dev/null 2>&1 &
 
 echo -e WP Redis Setup is completed;
 
-for name in MARIADB_ENV_MARIADB_DATABASE MARIADB_ENV_MARIADB_USER MARIADB_ENV_MARIADB_PASSWORD MARIADB_PORT_3306_TCP_ADDR MARIADB_PORT_3306_TCP_PORT AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY NGINX_USER NGINX_PATH_PREFIX SERVER_URLS MY_USER REDIS_PORT_6379_TCP_ADDR REDIS_PORT_6379_TCP_PORT WP_HOST_IP GCS_MEDIA_BUCKET GCS_MEDIA_MODE GCS_MEDIA_KEY_FILE_PATH GCS_MEDIA_SERVICE_ACCOUNT 
+for name in MARIADB_ENV_MARIADB_DATABASE MARIADB_ENV_MARIADB_USER MARIADB_ENV_MARIADB_PASSWORD MARIADB_PORT_3306_TCP_ADDR MARIADB_PORT_3306_TCP_PORT AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY NGINX_USER NGINX_PATH_PREFIX SERVER_URLS MY_USER REDIS_PORT_6379_TCP_ADDR REDIS_PORT_6379_TCP_PORT WP_HOST_IP GCS_MEDIA_BUCKET GCS_MEDIA_MODE GCS_MEDIA_KEY_FILE_PATH GCS_MEDIA_SERVICE_ACCOUNT GFB_PIPED_DOMAINS LUA_ROOT_PATH LUAJIT_ROOT LUA_MAIN_VERSION
 do
     eval value=\$$name;
     sudo sed -i "s|\${${name}}|${value}|g" $WP_HOME/wp-config.php;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/conf/nginx.conf;
+    sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/lua_ssl/lua_conf;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/conf/$MY_USER/default;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_80;
+    sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_443;
     sudo sed -i "s|\${${name}}|${value}|g" $NGINX_PATH_PREFIX/sites-available/port_5118;
 done
 
@@ -46,6 +50,7 @@ if [[ $NLS_PORT_80_TCP_ADDR ]]; then
 fi
 
 sudo chown -R $NGINX_USER:$NGINX_USER $WP_HOME > /dev/null 2>&1 &
+sudo chown -R $NGINX_USER:$NGINX_USER $RESTY_AUTO_SSL_PATH > /dev/null 2>&1 &
 sudo find $WP_HOME -type d -exec chmod 755 {} \; > /dev/null 2>&1 &
 sudo find $WP_HOME -type f -exec chmod 644 {} \; > /dev/null 2>&1 &
 

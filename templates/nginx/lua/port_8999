@@ -1,0 +1,9 @@
+# Internal server running on port 8999 for handling certificate tasks.
+server {
+  listen 127.0.0.1:8999;
+  location / {
+    content_by_lua_block {
+      auto_ssl:hook_server()
+    }
+  }
+}

@@ -1,4 +1,11 @@
 server {
   listen 80;
   include ${NGINX_PATH_PREFIX}/conf/${MY_USER}/default;
+
+  # Endpoint used for performing domain verification with Let's Encrypt.
+  location /.well-known/acme-challenge/ {
+    content_by_lua_block {
+      auto_ssl:challenge_server()
+    }
+  }
 }

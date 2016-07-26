@@ -1,0 +1,19 @@
+lua_package_path "${LUAJIT_ROOT}/share/lua/${LUA_MAIN_VERSION}/?.lua;;";
+lua_shared_dict auto_ssl 1m;
+resolver 8.8.8.8;
+
+init_by_lua_block {
+  auto_ssl = (require "resty.auto-ssl").new()
+
+  auto_ssl:set("allow_domain", function(domain)
+    return ngx.re.match(domain, "^(globalfoodbook.com|www.globalfoodbook.com|globalfoodbook.net|www.globalfoodbook.net|globalfoodbook.org|www.globalfoodbook.org|globalfoodbook.co.uk|www.globalfoodbook.co.uk)$", "ijo")
+  end)
+
+  auto_ssl:set("renew_check_interval", 172800)
+
+  auto_ssl:init()
+}
+
+init_worker_by_lua_block {
+  auto_ssl:init_worker()
+}
