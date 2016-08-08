@@ -79,7 +79,7 @@ WORKDIR ${APP_HOME}
 
 EXPOSE ${PHP_FPM_PORT}
 EXPOSE 80
-EXPOSE 5118
+EXPOSE 5119
 
 # Setup the entrypoint
 ENTRYPOINT ["/bin/bash", "-l", "-c"]
