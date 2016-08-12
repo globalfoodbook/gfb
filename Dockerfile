@@ -9,17 +9,24 @@ MAINTAINER Ikenna N. Okpala <me@ikennaokpala.com>
 # sudo adduser --system --no-create-home --user-group --disabled-login --disabled-password www-data
 #sudo adduser --system --no-create-home --user-group -s /sbin/nologin www-data
 
-ENV MY_USER=gfb WEB_USER=www-data DEBIAN_FRONTEND=noninteractive LOCAL_HOST_IP=0.0.0.0 NGINX_PATH_PREFIX=/etc/nginx NGINX_VERSION=1.9.15 NUT_API_PORT=8080 LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 PHPREDIS_VERSION=2.2.7 WP_REDIS_VERSION=0.5.0 GCS_MEDIA_BUCKET=assets.globalfoodbook.net GCS_MEDIA_MODE=cdn GCS_MEDIA_KEY_FILE_PATH=/gcs/media.p12 GCS_MEDIA_SERVICE_ACCOUNT=we@globalfoodbook.com PHP_FPM_PORT=9000 PHP_FPM_PATH=/etc/php5/fpm
-ENV NGINX_USER=${MY_USER} NGINX_LOG_PATH=${NGINX_PATH_PREFIX}/logs NUT_API_IP=${LOCAL_HOST_IP} NUT_API_IP_PORT=${NUT_API_IP}:${NUT_API_PORT} HOME=/home/${MY_USER} PHP_FPM_CONF=${PHP_FPM_PATH}/php-fpm.conf PHP_FPM_POOL_CONF=${PHP_FPM_PATH}/pool.d/www.conf PHP_FPM_INI=${PHP_FPM_PATH}/php.ini PHP_FPM_IP=${LOCAL_HOST_IP} SERVER_URLS="globalfoodbook.com www.globalfoodbook.com globalfoodbook.net www.globalfoodbook.net globalfoodbook.org www.globalfoodbook.org globalfoodbook.co.uk www.globalfoodbook.co.uk"
+ENV MY_USER=gfb WEB_USER=www-data DEBIAN_FRONTEND=noninteractive LOCAL_HOST_IP=0.0.0.0 NUT_API_PORT=8080 LANG=en_US.UTF-8 LANGUAGE=en_US.en LC_ALL=en_US.UTF-8 PHPREDIS_VERSION=2.2.7 WP_REDIS_VERSION=0.5.0 SERVER_URLS="globalfoodbook.com www.globalfoodbook.com globalfoodbook.net www.globalfoodbook.net globalfoodbook.org www.globalfoodbook.org globalfoodbook.co.uk www.globalfoodbook.co.uk" GCS_MEDIA_BUCKET=assets.globalfoodbook.net GCS_MEDIA_MODE=cdn GCS_MEDIA_KEY_FILE_PATH=/gcs/media.p12 GCS_MEDIA_SERVICE_ACCOUNT=we@globalfoodbook.com PHP_FPM_PORT=9000 PHP_FPM_PATH=/etc/php5/fpm PSOL_VERSION=1.11.33.2 NGINX_VERSION=1.9.15 OPENRESTY_VERSION=1.9.15.1  OPENRESTY_PATH=/etc/openresty LUAROCKS_VERSION=2.3.0 LUA_MAIN_VERSION=5.1 OPENSSL_VERSION=1.0.2h LUAJIT_VERSION=2.1 LUA_SUFFIX=jit-2.1.0-beta2
+ENV OPENRESTY_PATH_PREFIX=${OPENRESTY_PATH}/${MY_USER} NGINX_USER=${MY_USER} HOME=/home/${MY_USER} NPS_VERSION=${PSOL_VERSION}-beta
+ENV NGINX_PATH_PREFIX=${OPENRESTY_PATH_PREFIX}/nginx LUAJIT_ROOT=${OPENRESTY_PATH_PREFIX}/luajit
+ENV NGX_PAGESPEED_PATH=${NGINX_PATH_PREFIX}/ngx_pagespeed NGINX_LOG_PATH=${NGINX_PATH_PREFIX}/logs NGINX_CONF_PATH=${NGINX_PATH_PREFIX}/conf
+ENV NGX_PAGESPEED_RELEASE_PATH=${NGX_PAGESPEED_PATH}/ngx_pagespeed-release-${NPS_VERSION} NGINX_USER_CONF_PATH=${NGINX_CONF_PATH}/${MY_USER} OPENSSL_ROOT=${NGINX_PATH_PREFIX}/openssl-${OPENSSL_VERSION} NGINX_USER_LOG_PATH=${NGINX_LOG_PATH}/${MY_USER} NUT_API_IP=${LOCAL_HOST_IP} PATH="${PATH}:${OPENRESTY_PATH}/bin:${NGINX_PATH_PREFIX}/sbin:${NGINX_PATH_PREFIX}/bin:${LUAJIT_ROOT}/bin" LUAJIT_PACKAGE_PATH=${LUAJIT_ROOT}/share/lua/${LUA_MAIN_VERSION}
+ENV NUT_API_IP_PORT=${NUT_API_IP}:${NUT_API_PORT} HOME=/home/${MY_USER} PHP_FPM_CONF=${PHP_FPM_PATH}/php-fpm.conf PHP_FPM_POOL_CONF=${PHP_FPM_PATH}/pool.d/www.conf PHP_FPM_INI=${PHP_FPM_PATH}/php.ini PHP_FPM_IP=${LOCAL_HOST_IP}
 
-ENV NGINX_USER_LOG_PATH=${NGINX_LOG_PATH}/${MY_USER} NUT_API_URL="http://${NUT_API_IP_PORT}/v1/nutrition/facts?ingredients=" APP_HOME=${HOME}/app
+ENV NUT_API_URL="http://${NUT_API_IP_PORT}/v1/nutrition/facts?ingredients=" APP_HOME=${HOME}/app USER_TEMPLATES_PATH=${HOME}/templates
 ENV WP_HOME=${APP_HOME}/wp PHP_FPM_IP_PORT=${PHP_FPM_IP}:${PHP_FPM_PORT}
+
+ENV NGINX_FLAGS="--with-file-aio --with-ipv6 --with-http_ssl_module  --with-luajit-xcflags=-DLUAJIT_ENABLE_LUA52COMPAT --with-http_realip_module --with-http_addition_module --with-http_xslt_module --with-http_image_filter_module --with-http_geoip_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_random_index_module --with-http_secure_link_module --with-http_degradation_module --with-http_stub_status_module --with-http_perl_module --with-mail --with-mail_ssl_module --with-pcre --with-google_perftools_module --with-debug --with-openssl=${OPENSSL_ROOT} --with-md5=${OPENSSL_ROOT} --with-md5-asm --with-sha1=${OPENSSL_ROOT} --add-module=${NGX_PAGESPEED_RELEASE_PATH}" PS_NGX_EXTRA_FLAGS="--with-cc=/usr/bin/gcc --with-ld-opt=-static-libstdc++" OBJ_FILE_PATH="${WP_HOME}/wp-content/object-cache.php" WP_REDIS_OBJ_FILE_PATH="${WP_HOME}/wp-content/plugins/wp-redis/object-cache.php"
 
 RUN adduser --disabled-password --gecos "" ${MY_USER} && echo "${MY_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 USER ${MY_USER}
 
 ADD templates/wp-config.php $HOME/templates/wp-config.php
+ADD templates/nginx/init.sh /etc/init.d/nginx
 
 # Add all base dependencies
 RUN sudo apt-get update -y \
@@ -37,15 +44,17 @@ RUN sudo apt-get update -y \
   && sudo apt-get -y update \
   && sudo apt-get -y install php5-mysql libsqlite3-dev php5 php5-dev php5-curl php-pear php5-fpm php5-gd \
   && /bin/bash -l -c "sudo wget https://github.com/phpredis/phpredis/archive/${PHPREDIS_VERSION}.zip && sudo unzip ${PHPREDIS_VERSION}.zip && cd phpredis-${PHPREDIS_VERSION} && sudo phpize && sudo ./configure && sudo make && sudo make install" \
-  && sudo mkdir -p ${NGINX_USER_LOG_PATH} ${NGINX_PATH_PREFIX}/conf/${MY_USER} ${HOME}/templates \
-  && /bin/bash -l -c "sudo wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz -O ~/nginx-${NGINX_VERSION}.tar.gz && sudo tar xzf ~/nginx-${NGINX_VERSION}.tar.gz -C ~/ && cd ~/nginx-${NGINX_VERSION} && sudo ./configure --prefix=${NGINX_PATH_PREFIX} && sudo make && sudo make install && sudo rm -rf ~/nginx-${NGINX_VERSION}* && sudo mv ${NGINX_PATH_PREFIX}/conf/nginx.conf ${NGINX_PATH_PREFIX}/conf/nginx.conf.default"
+  && sudo mkdir -p ${OPENSSL_ROOT} ${NGINX_USER_CONF_PATH}/enabled ${NGINX_USER_CONF_PATH}/configs ${NGINX_USER_CONF_PATH}/lua/ ${USER_TEMPLATES_PATH}/enabled ${USER_TEMPLATES_PATH}/configs ${USER_TEMPLATES_PATH}/conf ${USER_TEMPLATES_PATH}/lua/ ${NGX_PAGESPEED_PATH} ${NGINX_LOG_PATH} ${NGINX_USER_LOG_PATH} \
+  && /bin/bash -l -c "sudo wget https://github.com/pagespeed/ngx_pagespeed/archive/release-${NPS_VERSION}.zip -O ${NGX_PAGESPEED_PATH}/release-${NPS_VERSION}.zip; sudo unzip ${NGX_PAGESPEED_PATH}/release-${NPS_VERSION}.zip -d ${NGX_PAGESPEED_PATH}; sudo wget https://dl.google.com/dl/page-speed/psol/${PSOL_VERSION}.tar.gz -O ${NGX_PAGESPEED_PATH}/${PSOL_VERSION}.tar.gz; sudo tar -xzvf ${NGX_PAGESPEED_PATH}/${PSOL_VERSION}.tar.gz -C ${NGX_PAGESPEED_RELEASE_PATH} && sudo wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz -O ${NGINX_PATH_PREFIX}/openssl-${OPENSSL_VERSION}.tar.gz && sudo tar -xzvf ${NGINX_PATH_PREFIX}/openssl-${OPENSSL_VERSION}.tar.gz -C ${NGINX_PATH_PREFIX}/"  \
+  && /bin/bash -l -c "sudo wget https://openresty.org/download/openresty-${OPENRESTY_VERSION}.tar.gz -O /etc/openresty-${OPENRESTY_VERSION}.tar.gz && sudo tar -xzvf /etc/openresty-${OPENRESTY_VERSION}.tar.gz -C /etc && cd /etc/openresty-${OPENRESTY_VERSION} && sudo ./configure --prefix=${OPENRESTY_PATH_PREFIX} ${PS_NGX_EXTRA_FLAGS} ${NGINX_FLAGS} && sudo make && sudo make install && sudo ln -sf ${LUAJIT_ROOT}/bin/${LUA_SUFFIX} ${LUAJIT_ROOT}/bin/lua && sudo ln -sf ${LUAJIT_ROOT}/bin/lua /usr/local/bin/lua"  \
+  && /bin/bash -l -c "sudo wget https://github.com/keplerproject/luarocks/archive/v${LUAROCKS_VERSION}.tar.gz -O ${OPENRESTY_PATH}/v${LUAROCKS_VERSION}.tar.gz && sudo tar -xzvf ${OPENRESTY_PATH}/v${LUAROCKS_VERSION}.tar.gz -C ${OPENRESTY_PATH} && cd ${OPENRESTY_PATH}/luarocks-${LUAROCKS_VERSION} && sudo ./configure --prefix=${LUAJIT_ROOT} --with-lua=${LUAJIT_ROOT} --lua-suffix=${LUA_SUFFIX} --sysconfdir=${LUAJIT_ROOT}/luarocks --with-lua-lib=${LUAJIT_ROOT}/lib --with-lua-include=${LUAJIT_ROOT}/include/luajit-${LUAJIT_VERSION} --force-config && sudo make build && sudo make install"  \
+  && sudo rm -rf ${OPENRESTY_PATH}/*.zip  ${OPENRESTY_PATH}/*.tar.gz ${NGINX_USER_CONF_PATH}/*.tar.gz ${NGINX_USER_CONF_PATH}/*.zip ${OPENRESTY_PATH}/luarocks-${LUAROCKS_VERSION} /etc/openresty-* \
+  && /bin/bash -l -c "sudo chmod +x /etc/init.d/nginx && sudo update-rc.d nginx defaults"
 
-ADD templates/nginx/default.conf ${NGINX_PATH_PREFIX}/conf/${MY_USER}/default.conf
-ADD templates/nginx/default.conf ${HOME}/templates/default.conf
-ADD templates/nginx/nginx.conf ${NGINX_PATH_PREFIX}/conf/nginx.conf
-ADD templates/nginx/nginx.conf ${HOME}/templates/nginx.conf
-ADD templates/nginx/init.sh /etc/init.d/nginx
-RUN /bin/bash -l -c "sudo chmod +x /etc/init.d/nginx && sudo update-rc.d nginx defaults"
+ADD templates/nginx/conf/*.conf ${USER_TEMPLATES_PATH}/conf/
+ADD templates/nginx/enabled/*.conf ${USER_TEMPLATES_PATH}/enabled/
+ADD templates/nginx/configs/*.conf ${USER_TEMPLATES_PATH}/configs/
+ADD templates/nginx/lua/* ${USER_TEMPLATES_PATH}/lua/
 
 WORKDIR /usr/local
 
@@ -67,8 +76,8 @@ RUN /bin/bash -l -c "sudo wget http://downloads2.ioncube.com/loader_downloads/io
   && sudo sed -i -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" ${PHP_FPM_POOL_CONF} \
   && sudo sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" ${PHP_FPM_POOL_CONF} \
   && sudo find /etc/php5/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g' {} \; \
-  && sudo sed -i s"/listen.allowed_clients = 127.0.0.1/listen.allowed_clients = ${PHP_FPM_IP_PORT}/" ${PHP_FPM_POOL_CONF} \
-  # && sudo sed -i -e "/allowed_clients/d" ${PHP_FPM_POOL_CONF} \
+  && sudo sed -i s"/;listen.allowed_clients = 127.0.0.1/listen.allowed_clients = ${PHP_FPM_IP}/" ${PHP_FPM_POOL_CONF} \
+  # && sudo sed -i -e "/listen.allowed_clients/d" ${PHP_FPM_POOL_CONF} \
   && sudo sed -i -e "/error_log/d" ${PHP_FPM_POOL_CONF} \
   && sudo echo "Europe/London" | sudo tee /etc/timezone && sudo dpkg-reconfigure --frontend $DEBIAN_FRONTEND tzdata
 

@@ -80,11 +80,11 @@ if [ -f /etc/default/nginx ]; then
 fi
 
 # Minimize path
-PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/etc/openresty/bin:/etc/openresty/ngxl/nginx/sbin:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 PS=${PS:-"nginx"}                             # process name
-DESCRIPTION=${DESCRIPTION:-"Nginx Server..."} # process description
-NGINXPATH=${NGINXPATH:-/etc/nginx}      # root path where installed
+DESCRIPTION=${DESCRIPTION:-"Openresty Nginx-Lua Server..."} # process description
+NGINXPATH=${NGINXPATH:-/etc/openresty/gfb/nginx}      # root path where installed
 DAEMON=${DAEMON:-$NGINXPATH/sbin/nginx}       # path to daemon binary
 NGINX_CONF_FILE=${NGINX_CONF_FILE:-$NGINXPATH/conf/nginx.conf} # config file path
 
