@@ -29,8 +29,14 @@ define('W3TC_EDGE_MODE', true); // Added by W3 Total Cache
 
 set_time_limit(6);
 
-define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
-define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
+$scheme = 'http';
+if ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'){
+  define('FORCE_SSL_ADMIN', true);
+  $_SERVER['HTTPS']='on';
+  $scheme = 'https';
+}
+define("WP_SITEURL", "$scheme://" . $_SERVER['HTTP_HOST']);
+define("WP_HOME", "$scheme://" . $_SERVER['HTTP_HOST']);
 
 define("DB_NAME",     "${MARIADB_ENV_MARIADB_DATABASE}");
 define("DB_USER",     "${MARIADB_ENV_MARIADB_USER}");
