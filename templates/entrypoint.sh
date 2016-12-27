@@ -15,7 +15,7 @@ sudo cp ${USER_TEMPLATES_PATH}/conf/*.conf ${NGINX_CONF_PATH};
 
 if [[ ! -f $wp_redis_obj_file_path ]];
 then
-  sudo wget https://github.com/globalfoodbook/wp-redis/archive/v$WP_REDIS_VERSION.zip -O $USER_TEMPLATES_PATH/v$WP_REDIS_VERSION.zip;
+  sudo wget https://github.com/pantheon-systems/wp-redis/archive/v$WP_REDIS_VERSION.zip -O $USER_TEMPLATES_PATH/v$WP_REDIS_VERSION.zip;
   sudo unzip -j $USER_TEMPLATES_PATH/v$WP_REDIS_VERSION.zip -d $WP_HOME/wp-content/plugins/wp-redis;
 fi
 
